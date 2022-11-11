@@ -3,7 +3,6 @@
 </script>
 <template>
     <div class="home-page-background">
-        Hello
     </div>
 </template>
 <script>

@@ -35,6 +35,13 @@ a,
 } */
 
 
+
+body * {
+  box-sizing: border-box;
+  min-height: 100% !important;
+  height: 100%;
+}
+
 *{
   margin: 0;
   padding: 0;
@@ -43,9 +50,23 @@ a,
 
 
 .home-page-background{
-  background-image: url('../images/dots-and-boxes-background.jpg'), linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75));
-  width:100%;
   height: 100vh;
-  
+  width: 100%;
+  background: black url('../images/dots-and-boxes-background.jpg') center center no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+}
+
+
+.flex-row {
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 270px;
+  bottom: 0;
+  width: 100%;
+  overflow: scroll;
 }
 
