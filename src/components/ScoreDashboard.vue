@@ -15,11 +15,7 @@ export default {
             type: Array,
             required: true
         }
-    
     },
-
-    
-
 }
 </script>
 
@@ -27,7 +23,6 @@ export default {
 .turn-dashboard{
     height: 50px  !important;
     width: 100% !important;
-    
 }
 
 .score-dashboard-text{

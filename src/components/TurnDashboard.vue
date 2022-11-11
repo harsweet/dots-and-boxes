@@ -23,20 +23,3 @@ export default {
 
 }
 </script>
-
-
-<style scoped>
-
-.turn-dashboard{
-    height: 50px  !important;
-    width: 100% !important;
-    
-}
-
-.turn-dashboard-text{
-    font-size: larger;
-    width: 100% !important;
-    color: aqua !important;
-}
-
-</style>

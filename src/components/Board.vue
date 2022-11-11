@@ -4,23 +4,31 @@
   import ScoreDashboard from './ScoreDashboard.vue';
 </script>
 <template>
-    <TurnDashboard :playerNo="this.currentPlayer"/>
-    <ScoreDashboard :playerScores="this.playerScores"/>
-    <div>
-      <svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
-        <template v-for="lineComponent in Object.entries(lineComponents)">
-          <BoxLine 
-          :id="'line-'+lineComponent[0]"
-          :boxId="lineComponent[1]" 
-          :lineCoordinates="lineComponent[0]" 
-          stroke="blue"
-          cursor="pointer"
-          @increaseBoxCount="increaseBoxCount"
-          />
-        </template>
-        <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" r="20" fill="red"/>
-      </svg>
+    <div v-for="(score, index) in this.playerScores">
+      <h5 class="turn-dashboard-text">Player {{index+1}} Score: {{score}}</h5>
     </div>
+    <h5 class="turn-dashboard-text">Turn: Player {{this.currentPlayer}}</h5>
+    <!-- <ScoreDashboard :playerScores="this.playerScores"/> -->
+    <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
+      <template v-for="lineComponent in Object.entries(lineComponents)">
+        <BoxLine 
+        :id="'line-'+lineComponent[0]"
+        :boxId="lineComponent[1]" 
+        :lineCoordinates="lineComponent[0]" 
+        stroke="white"
+        cursor="pointer"
+        @increaseBoxCount="increaseBoxCount"
+        />
+      </template>
+      <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" :r="sizeMultiplier/5" fill="purple"/>
+      <template v-for="(playerBoxesWon, index) in this.boxesWon">
+        <template v-for="boxWon in playerBoxesWon">
+          <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" class="box-text">P{{index+1}}</text>
+          {{boxWon}}
+        </template>
+      </template>
+  
+    </svg>
 </template>
 <script>
 
@@ -32,7 +40,7 @@ export default {
         },
         noOfPlayers: {
           type: Number,
-          default: 2
+          default: 3
         }
     },
    
@@ -42,12 +50,13 @@ export default {
             boxes: [], 
             dotComponents: [],
             lineComponents: [],
-            sizeMultiplier: 200,
+            sizeMultiplier: 32,
             boxCountArray: [],
             boxesCompleted: 0,
             currentPlayer: 1,
             playerScores: [],
-            playerColors: ["red", "yellow", "green"]
+            playerColors: ["red", "yellow", "green"],
+            boxesWon: [],
         }
     },
 
@@ -56,6 +65,7 @@ export default {
       this.setSvgData()
       this.initialiseBoxCount()
       this.initialisePlayerScore()
+      this.initialiseBoxesWon()
     },
 
     computed: {
@@ -76,6 +86,15 @@ export default {
           scoresArray.push(0)
         }
         this.playerScores = scoresArray
+      },
+
+      initialiseBoxesWon(){
+        var boxesWonArray = []
+
+        for (let scoreNo = 0; scoreNo < this.noOfPlayers; scoreNo++) {
+          boxesWonArray.push([])
+        }
+        this.boxesWon = boxesWonArray
       },
 
       changeTurn(){
@@ -190,6 +209,8 @@ export default {
               console.log(boxId,' completed')
               this.boxesCompleted += 1
               this.playerScores[this.currentPlayer-1]++
+              const boxWonDetails = this.boxes.filter(box => box.boxId == boxId)[0]
+              this.boxesWon[this.currentPlayer-1].push(boxWonDetails)
               boxesCompletedThisTurn = true
             }
           }

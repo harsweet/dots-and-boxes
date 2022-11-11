@@ -6,7 +6,7 @@
         :x2="this.lineEndX" 
         :y2="this.lineEndY" 
         :fill="this.strokeColor"
-        stroke-width="20px"
+        stroke-width="5"
         @click="changeColor()"
     />
 </template>
