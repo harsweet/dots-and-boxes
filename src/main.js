@@ -12,7 +12,7 @@ const app = createApp(App)
 
 const routes = [
     { path: '/', component: StartGame },
-    { path: '/gameOver', component: GameOver },
+    { path: '/gameOver', component: GameOver, name: 'gameOver' , props: true},
     { path: '/gameScreen', component: GameScreen },
 ]
 

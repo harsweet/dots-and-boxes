@@ -109,6 +109,12 @@ export default {
       gameOverMessage(){
         if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
           alert("YESSSSSS GAME OVER")
+          this.$router.push({
+            name: 'gameOver',
+            params: {
+              winner: [1] // or anything you want
+            }
+          }) 
         }
       },
 
