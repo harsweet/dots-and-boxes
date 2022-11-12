@@ -3,7 +3,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import './assets/stylesheets/main.css';
 
 import App from './App.vue'
-import StartGame from './StartGame.vue'
+import Home from './Home.vue'
 import GameOver from './GameOver.vue'
 import GameScreen from './GameScreen.vue'
 
@@ -11,7 +11,7 @@ import GameScreen from './GameScreen.vue'
 const app = createApp(App)
 
 const routes = [
-    { path: '/', component: StartGame },
+    { path: '/', component: Home },
     { path: '/gameOver', component: GameOver, name: 'gameOver' , props: true},
     { path: '/gameScreen', component: GameScreen },
 ]

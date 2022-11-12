@@ -7,7 +7,6 @@
             <div class="board-holder">
             <Board/>
             </div>
-        </div> 
-        
+        </div>   
     </div>
 </template>
