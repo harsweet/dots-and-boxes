@@ -18,12 +18,13 @@ body * {
 
 .page-background {
   height: 100vh;
+  position: fixed;
   width: 100%;
   background-size: cover;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  overflow-x: scroll;
+  overflow: scroll;
 }
 
 .flex-column {
@@ -115,4 +116,12 @@ body * {
   font-family: sans-serif;
   font-size: smaller;
   font-style: oblique;
+}
+
+@media only screen and (max-width: 600px) {
+  #board-svg {
+    width: 100%;
+    min-width: 350px;
+    min-height: 350px;
+  }
 }
