@@ -2,39 +2,36 @@
   import BoxLine from './BoxLine.vue';
 </script>
 <template>
-    <div>
-      <button class="page-link-btn" type="button"
-        @click="this.$router.go()">
-          RESTART THE GAME
-        </button>
-        <button class="page-link-btn" type="button"
-          @click="this.$router.push('/')">
-            GO BACK TO HOME
-        </button>
-    </div>
-    <template v-for="(score, index) in this.playerScores">
-      <h5 class="score-dashboard-text board-element" :style="{'color': this.playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
+  <button class="page-link-btn" type="button"
+  @click="this.$router.go()">
+    RESTART THE GAME
+  </button>
+  <button class="page-link-btn" type="button"
+  @click="this.$router.push('/')">
+    GO BACK TO HOME
+  </button>
+  <template v-for="(score, index) in this.playerScores">
+    <h5 class="score-dashboard-text board-element" :style="{'color': this.playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
+  </template>
+  <h5 class="turn-dashboard-text board-element">Turn: Player {{this.currentPlayer}}</h5>
+  <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
+    <template v-for="lineComponent in Object.entries(lineComponents)">
+      <BoxLine 
+      :id="'line-'+lineComponent[0]"
+      :boxId="lineComponent[1]" 
+      :lineCoordinates="lineComponent[0]" 
+      stroke="white"
+      cursor="pointer"
+      @increaseBoxCount="increaseBoxCount"
+      />
     </template>
-    <h5 class="turn-dashboard-text board-element">Turn: Player {{this.currentPlayer}}</h5>
-    <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
-      <template v-for="lineComponent in Object.entries(lineComponents)">
-        <BoxLine 
-        :id="'line-'+lineComponent[0]"
-        :boxId="lineComponent[1]" 
-        :lineCoordinates="lineComponent[0]" 
-        stroke="white"
-        cursor="pointer"
-        @increaseBoxCount="increaseBoxCount"
-        />
+    <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" :r="sizeMultiplier/5" fill="purple"/>
+    <template v-for="(playerBoxesWon, index) in this.boxesWon">
+      <template v-for="boxWon in playerBoxesWon">
+        <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" :fill="this.playerColors[index]" class="box-text">P{{index+1}}</text>
       </template>
-      <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" :r="sizeMultiplier/5" fill="purple"/>
-      <template v-for="(playerBoxesWon, index) in this.boxesWon">
-        <template v-for="boxWon in playerBoxesWon">
-          <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" :fill="this.playerColors[index]" class="box-text">P{{index+1}}</text>
-          {{boxWon}}
-        </template>
-      </template>
-    </svg>
+    </template>
+  </svg>
 </template>
 <script>
 
