@@ -47,7 +47,7 @@ export default {
     methods: {
         getTheMessage(){
             if(this.$props.winner.length > 1){
-                this.messageToDisplay = `And This is a tie, Players ${this.$props.winner.join(',')} have won!`
+                this.messageToDisplay = `And This is a tie, Players ${this.$props.winner.join(', ')} have all won!`
             }
             if(this.$props.winner.length == 1){
                 this.messageToDisplay = `And the winner is Player ${this.$props.winner[0]}`
