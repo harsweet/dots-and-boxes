@@ -82,12 +82,16 @@ body * {
 #board-svg {
   width: 70%;
   height: 50vh;
+  display: block;
+  min-width: 200px;
+  min-height: 200px;
 }
 
 .board-element {
   padding-top: 10px;
   text-align: center;
   width: 70vw;
+  display: block;
 }
 
 .board-holder {
