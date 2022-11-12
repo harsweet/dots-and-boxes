@@ -210,7 +210,6 @@ export default {
           for(const boxId of boxIds){
             this.boxCountArray[boxId]++
             if(this.boxCountArray[boxId]==4){
-              console.log(boxId,' completed')
               this.boxesCompleted += 1
               this.playerScores[this.currentPlayer-1]++
               const boxWonDetails = this.boxes.filter(box => box.boxId == boxId)[0]
@@ -219,7 +218,6 @@ export default {
             }
           }
           if(!boxesCompletedThisTurn){
-            console.log('yes')
             this.changeTurn()
           }
           setTimeout(() => this.gameOverCheck(), 200)

@@ -59,7 +59,6 @@ export default {
         changeColor(){
             if(!this.alreadyClicked){
                 this.alreadyClicked = true
-                console.log("line of BoxID(s) ", this.boxId, " clicked")
                 this.$emit('increaseBoxCount', this.boxId, this.$props.lineCoordinates)
             }
         },
