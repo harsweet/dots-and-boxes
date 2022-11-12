@@ -26,7 +26,6 @@
           {{boxWon}}
         </template>
       </template>
-  
     </svg>
 </template>
 <script>
@@ -65,15 +64,6 @@ export default {
       this.initialiseBoxCount()
       this.initialisePlayerScore()
       this.initialiseBoxesWon()
-    },
-
-    computed: {
-
-      // gameOver(){
-      //   if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
-      //     alert("YESSSSSS GAME OVER")
-      //   }
-      // },
     },
 
     methods: {
@@ -116,6 +106,26 @@ export default {
           }) 
         }
       },
+
+      getWinners(){
+        const highestScore = Math.max(...this.playerScores);
+        const winners = []
+        this.playerScores.forEach((score, index) => score === highestScore ? winners.push(index+1): null);
+        return winners
+      },
+
+      gameOverCheck(){
+        if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
+          const winners = this.getWinners()
+          this.$router.push({
+            name: 'gameOver',
+            params: {
+              winner: winners
+            }
+          }) 
+        }
+      },
+
 
       setSvgData(){
         this.setCircleSvgData()
@@ -223,10 +233,7 @@ export default {
             console.log('yes')
             this.changeTurn()
           }
-          
-          setTimeout(() => this.gameOverMessage(), 200)
-
-          
+          setTimeout(() => this.gameOverCheck(), 200)
         }
     }
 
