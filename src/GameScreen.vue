@@ -1,5 +1,4 @@
 <script setup>
-    import ScoreDashboard from './components/ScoreDashboard.vue';
     import Board from './components/Board.vue';
 </script>
 <template>
@@ -12,30 +11,3 @@
         
     </div>
 </template>
-<script>
-
-export default {
-    props: {
-       
-    },
-   
-    data() {
-        return {
-            
-        }
-    },
-
-    beforeMount(){
-      
-    },
-
-    computed: {
-
-    },
-
-    methods: {
-
-    }
-
-}
-</script>

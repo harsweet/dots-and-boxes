@@ -1,6 +1,3 @@
-<script setup>
-
-</script>
 <template>
     <div class="home-setting page-background">
         <div class="flex-column">
@@ -19,32 +16,3 @@
         </div>
     </div>
 </template>
-<script>
-
-export default {
-    props: {
-       
-    },
-   
-    data() {
-        return {
-            
-        }
-    },
-
-    beforeMount(){
-      
-    },
-
-    computed: {
-
-    },
-
-    methods: {
-
-    }
-
-}
-</script>
-
-

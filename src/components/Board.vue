@@ -1,7 +1,5 @@
 <script setup>
   import BoxLine from './BoxLine.vue';
-  import TurnDashboard from './TurnDashboard.vue';
-  import ScoreDashboard from './ScoreDashboard.vue';
 </script>
 <template>
     <div v-for="(score, index) in this.playerScores">
@@ -95,18 +93,6 @@ export default {
         }
       },
 
-      gameOverMessage(){
-        if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
-          alert("YESSSSSS GAME OVER")
-          this.$router.push({
-            name: 'gameOver',
-            params: {
-              winner: [1] // or anything you want
-            }
-          }) 
-        }
-      },
-
       getWinners(){
         const highestScore = Math.max(...this.playerScores);
         const winners = []
@@ -185,8 +171,6 @@ export default {
         setCircleSvgData(){
 
           // Setting up the circles
-          
-          
           for (let i = 1; i <= this.$props.dotsNo; i++) {  
               var xCoordinate = i*this.sizeMultiplier;
               for (let j = 1; j <= this.$props.dotsNo; j++) {
@@ -195,11 +179,6 @@ export default {
               }
           }
         },
-
-        // changePlayerTurn(){
-        //     this.currentPlayerID = ((this.currentPlayerID) % this.$props.totalPlayers)+1 ;
-        //     console.log(this.playerTurn)
-        // },
 
         initialiseBoxCount(){
           var boxArray = []
@@ -211,7 +190,7 @@ export default {
 
         increaseBoxCount(boxIds, lineCoordinates){
           
-          // First printing which line
+          // Getting the the Line by its Id
           const lineElement = document.getElementById('line-'+lineCoordinates)
           lineElement.setAttribute("stroke", this.playerColors[this.currentPlayer-1])
           lineElement.setAttribute("visibility","visible")
@@ -236,7 +215,6 @@ export default {
           setTimeout(() => this.gameOverCheck(), 200)
         }
     }
-
 }
 </script>
 
