@@ -118,10 +118,13 @@ body * {
 
 #board-svg {
   width: 70%;
+  height: 60vh;
 }
 
 .board-element {
-  padding-top: 10px 0;
+  padding-top: 10px;
+  text-align: center;
+  width: 70vw;
 }
 
 .board-holder {
@@ -129,14 +132,20 @@ body * {
 }
 
 .turn-dashboard-text{
-  text-align: center;
-  width: 70vw;
+  font-family: sans-serif;
+  font-size: larger;
+  font-weight: normal;
   color: aqua !important;
+}
+
+.score-dashboard-text{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: large;
+  font-weight: lighter;
 }
 
 .box-text {
   font-family: sans-serif;
   font-size: smaller;
   font-style: oblique;
-  fill: red;
 }

@@ -5,10 +5,9 @@
 </script>
 <template>
     <div v-for="(score, index) in this.playerScores">
-      <h5 class="turn-dashboard-text">Player {{index+1}} Score: {{score}}</h5>
+      <h5 class="score-dashboard-text board-element" :style="{'color': this.playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
     </div>
-    <h5 class="turn-dashboard-text">Turn: Player {{this.currentPlayer}}</h5>
-    <!-- <ScoreDashboard :playerScores="this.playerScores"/> -->
+    <h5 class="turn-dashboard-text board-element">Turn: Player {{this.currentPlayer}}</h5>
     <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
       <template v-for="lineComponent in Object.entries(lineComponents)">
         <BoxLine 
@@ -23,7 +22,7 @@
       <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" :r="sizeMultiplier/5" fill="purple"/>
       <template v-for="(playerBoxesWon, index) in this.boxesWon">
         <template v-for="boxWon in playerBoxesWon">
-          <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" class="box-text">P{{index+1}}</text>
+          <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" :fill="this.playerColors[index]" class="box-text">P{{index+1}}</text>
           {{boxWon}}
         </template>
       </template>
