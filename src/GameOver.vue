@@ -27,6 +27,8 @@
 <script>
 
 export default {
+    // Takes in the winner array
+    // Also prohibits entry just by Url
     props: {
         winner: {
             type: Array,
@@ -41,10 +43,12 @@ export default {
     },
 
     beforeMount(){
+      // Computes suitable message before mounting
       this.getTheMessage()
     },
 
     methods: {
+        // Getting suitable message
         getTheMessage(){
             if(this.$props.winner.length > 1){
                 this.messageToDisplay = `And This is a tie, Players ${this.$props.winner.join(', ')} have all won!`

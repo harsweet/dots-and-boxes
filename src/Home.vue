@@ -1,4 +1,5 @@
 <template>
+    <!-- Our home page for the app with the start game button -->
     <div class="home-setting page-background">
         <div class="flex-column">
             <p class="page-header">

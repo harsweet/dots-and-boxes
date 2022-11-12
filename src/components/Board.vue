@@ -2,6 +2,7 @@
   import BoxLine from './BoxLine.vue';
 </script>
 <template>
+  <!-- The Two Action Buttons -->
   <button class="page-link-btn" type="button"
   @click="this.$router.go()">
     RESTART THE GAME
@@ -10,10 +11,17 @@
   @click="this.$router.push('/')">
     GO BACK TO HOME
   </button>
+
+  <!-- Uses the playerScores array to show the scores -->
   <template v-for="(score, index) in this.playerScores">
     <h5 class="score-dashboard-text board-element" :style="{'color': this.playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
   </template>
+
+  <!-- Informs the players of the player turns -->
   <h5 class="turn-dashboard-text board-element">Turn: Player {{this.currentPlayer}}</h5>
+  
+  <!-- Draws the acutal board -->
+  <!-- First come the lines -->
   <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
     <template v-for="lineComponent in Object.entries(lineComponents)">
       <BoxLine 
@@ -25,7 +33,11 @@
       @increaseBoxCount="increaseBoxCount"
       />
     </template>
+
+    <!-- For drawing the circles -->
     <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" :r="sizeMultiplier/5" fill="purple"/>
+    
+    <!-- For display who won which box -->
     <template v-for="(playerBoxesWon, index) in this.boxesWon">
       <template v-for="boxWon in playerBoxesWon">
         <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" :fill="this.playerColors[index]" class="box-text">P{{index+1}}</text>
@@ -36,7 +48,9 @@
 <script>
 
 export default {
-    props: {
+  // A possible extension of this future where we can have dynamic player numbers and board sizes
+  // Not required for this assignment as we only need a 4 * 4 grid and 3 player support
+  props: {
         dotsNo: {
             type: Number,
             default: 4
@@ -58,12 +72,13 @@ export default {
             boxesCompleted: 0,
             currentPlayer: 1,
             playerScores: [],
-            playerColors: ["red", "yellow", "green"],
+            playerColors: ["red", "yellow", "green"],   // To help identify players
             boxesWon: [],
         }
     },
 
     beforeMount(){
+      // Befor mounting the app (showing the game), we initialise some stuff
       this.rowsAndColumnsNo = this.$props.dotsNo-1
       this.setSvgData()
       this.initialiseBoxCount()
@@ -73,6 +88,7 @@ export default {
 
     methods: {
 
+      // Initialising the scores array
       initialisePlayerScore(){
         var scoresArray = []
 
@@ -82,6 +98,7 @@ export default {
         this.playerScores = scoresArray
       },
 
+      // Initialising the boxesWon array
       initialiseBoxesWon(){
         var boxesWonArray = []
 
@@ -91,6 +108,7 @@ export default {
         this.boxesWon = boxesWonArray
       },
 
+      // For calculating next player Turn
       changeTurn(){
         if(this.currentPlayer == this.$props.noOfPlayers){
           this.currentPlayer = 1
@@ -100,6 +118,7 @@ export default {
         }
       },
 
+      // For getting the winner(s)
       getWinners(){
         const highestScore = Math.max(...this.playerScores);
         const winners = []
@@ -107,6 +126,7 @@ export default {
         return winners
       },
 
+      // Checks whether to call it a game or not
       gameOverCheck(){
         if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
           const winners = this.getWinners()
@@ -119,13 +139,14 @@ export default {
         }
       },
 
-
+      // Setting svg Coordinates
       setSvgData(){
         this.setCircleSvgData()
         this.getLinesSvgData()
       },
 
-
+      // Setting the boxes info
+      // Each box should know which line belongs to it
       setBoxes(){
 
         var myBoxes = []
@@ -146,7 +167,7 @@ export default {
         this.boxes = myBoxes
       },
 
-
+      // For getting data for drawing using the boxes
       getLinesSvgData(){
         this.setBoxes()
         var allLines = []
@@ -175,6 +196,7 @@ export default {
         this.lineComponents = allLines
         },
 
+        // Setting coordinates for circles
         setCircleSvgData(){
 
           // Setting up the circles
@@ -187,6 +209,7 @@ export default {
           }
         },
 
+        // Initialise boxCountArray (tracks how many lines belonging to a given box have been clicked)
         initialiseBoxCount(){
           var boxArray = []
           for(let boxNo = 0; boxNo <this.boxes.length; boxNo++){
@@ -195,6 +218,7 @@ export default {
           this.boxCountArray = boxArray
         },
 
+        // TO increase box count of boxes to which a line belong, invoked when it clicked
         increaseBoxCount(boxIds, lineCoordinates){
           
           // Getting the the Line by its Id
@@ -203,6 +227,7 @@ export default {
           lineElement.setAttribute("visibility","visible")
           lineElement.removeAttribute("cursor")
           
+          // Updating stuff
           var boxesCompletedThisTurn = false
           for(const boxId of boxIds){
             this.boxCountArray[boxId]++
@@ -217,6 +242,11 @@ export default {
           if(!boxesCompletedThisTurn){
             this.changeTurn()
           }
+
+          // In order to give some time for showing the line color change, before
+          // going to the gameOver page, when condition is met
+          // Also it repeatedly checks for whether gameOver condition is met, after
+          // each line click 
           setTimeout(() => this.gameOverCheck(), 200)
         }
     }

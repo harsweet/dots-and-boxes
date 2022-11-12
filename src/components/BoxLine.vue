@@ -13,7 +13,8 @@
 
 <script>
 export default {
-
+    // We use this prop info for plotting the lines
+    // Each line has knowledge about which box it belongs
     props: {
         boxId: {
             type: Array,
@@ -38,6 +39,7 @@ export default {
     },
 
     beforeMount(){
+        // Setting up the coordinates for the line to be draw
         const coordinates = this.$props.lineCoordinates.split(',')
         this.lineStartX = coordinates[0]
         this.lineStartY = coordinates[1]
@@ -56,6 +58,8 @@ export default {
 
 
     methods: {
+        // For when the line is clicked
+        // Only works it had not been 'alreadyClicked'
         changeColor(){
             if(!this.alreadyClicked){
                 this.alreadyClicked = true

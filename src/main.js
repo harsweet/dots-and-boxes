@@ -10,6 +10,10 @@ import GameScreen from './GameScreen.vue'
 
 const app = createApp(App)
 
+// Our routes
+// Home Page
+// Game Page
+// GameOver Page
 const routes = [
     { path: '/', component: Home },
     { path: '/gameOver', component: GameOver, name: 'gameOver' , props: true},
