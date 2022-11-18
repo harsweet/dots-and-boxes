@@ -5,7 +5,7 @@
     <div class="home-setting page-background">
         <div class="flex-column">
             <p class="page-header">
-                {{this.messageToDisplay}}
+                {{ messageToDisplay }}
             </p>
             <p class="page-description">
                 If players want, you can start a new game

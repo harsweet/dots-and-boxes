@@ -13,12 +13,12 @@
   </button>
 
   <!-- Uses the playerScores array to show the scores -->
-  <template v-for="(score, index) in this.playerScores">
-    <h5 class="score-dashboard-text board-element" :style="{'color': this.playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
+  <template v-for="(score, index) in playerScores">
+    <h5 class="score-dashboard-text board-element" :style="{'color': playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
   </template>
 
   <!-- Informs the players of the player turns -->
-  <h5 class="turn-dashboard-text board-element">Turn: Player {{this.currentPlayer}}</h5>
+  <h5 class="turn-dashboard-text board-element">Turn: Player {{ currentPlayer }}</h5>
   
   <!-- Draws the acutal board -->
   <!-- First come the lines -->
@@ -38,9 +38,9 @@
     <circle v-for="dotComponent in dotComponents" :cx="dotComponent[0]" :cy="dotComponent[1]" :r="sizeMultiplier/5" fill="purple"/>
     
     <!-- For display who won which box -->
-    <template v-for="(playerBoxesWon, index) in this.boxesWon">
+    <template v-for="(playerBoxesWon, index) in boxesWon">
       <template v-for="boxWon in playerBoxesWon">
-        <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" :fill="this.playerColors[index]" class="box-text">P{{index+1}}</text>
+        <text :x="boxWon.xStart+(sizeMultiplier/4.2)" :y="boxWon.yStart+(sizeMultiplier/1.6)" :fill="playerColors[index]" class="box-text">P{{index+1}}</text>
       </template>
     </template>
   </svg>

@@ -1,13 +1,13 @@
 <template>
     <line 
         :style="styleObject"
-        :x1="this.lineStartX" 
-        :y1="this.lineStartY" 
-        :x2="this.lineEndX" 
-        :y2="this.lineEndY" 
-        :fill="this.strokeColor"
+        :x1="lineStartX" 
+        :y1="lineStartY" 
+        :x2="lineEndX" 
+        :y2="lineEndY" 
+        :fill="strokeColor"
         stroke-width="5"
-        @click="changeColor()"
+        @click="handleClick()"
     />
 </template>
 
