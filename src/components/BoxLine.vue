@@ -7,7 +7,7 @@
         :y2="lineEndY" 
         :fill="strokeColor"
         stroke-width="5"
-        @click="handleClick()"
+        @click="handleClick"
     />
 </template>
 
@@ -60,7 +60,7 @@ export default {
     methods: {
         // For when the line is clicked
         // Only works it had not been 'alreadyClicked'
-        changeColor(){
+        handleClick(){
             if(!this.alreadyClicked){
                 this.alreadyClicked = true
                 this.$emit('increaseBoxCount', this.boxId, this.$props.lineCoordinates)
