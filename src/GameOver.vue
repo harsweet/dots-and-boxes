@@ -12,11 +12,11 @@
                 or go back to the Home Page
             </p>
             <button class="page-link-btn" type="button"
-            @click="this.$router.push('/gameScreen')">
+            @click="$router.push('/gameScreen')">
                 START ANOTHER GAME
             </button>
             <button class="page-link-btn" type="button"
-            @click="this.$router.push('/')">
+            @click="$router.push('/')">
                 GO BACK TO HOME
             </button>
         </div>

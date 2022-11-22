@@ -4,11 +4,11 @@
 <template>
   <!-- The Two Action Buttons -->
   <button class="page-link-btn" type="button"
-  @click="this.$router.go()">
+  @click="$router.go()">
     RESTART THE GAME
   </button>
   <button class="page-link-btn" type="button"
-  @click="this.$router.push('/')">
+  @click="$router.push('/')">
     GO BACK TO HOME
   </button>
 
