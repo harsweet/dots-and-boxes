@@ -11,12 +11,44 @@
                 button below to start a new game
             </p>
             <button class="page-link-btn" type="button" 
-            @click="$router.push('/gameScreen')">
-                START A GAME
+            @click="">
+                JOIN A ROOM
+            </button>
+            <button class="page-link-btn" type="button" 
+            @click="">
+                CREATE A NEW ROOM
             </button>
         </div>
     </div>
 </template>
 
 <script>
+import { io } from 'socket.io-client';
+
+export default {
+  data() {
+      return {
+        socket: {}
+      }
+  },
+
+  created(){
+    this.socket = io("http://localhost:3000");
+    this.socket.emit('my message', 'Hello there from Vue.');
+  } ,
+
+  computed:
+    function() {
+      this.socket.on('my broadcast', (data) => {
+        console.log(data);
+      });
+  },
+
+
+  beforeUnmount() {
+    if (this.socket) {
+      this.socket.disconnect();
+    } 
+  }
+}
 </script>
