@@ -17,7 +17,7 @@ const app = createApp(App)
 const routes = [
     { path: '/', component: Home },
     { path: '/gameOver', component: GameOver, name: 'gameOver' , props: true},
-    { path: '/gameScreen', component: GameScreen },
+    { path: '/gameScreen', component: GameScreen, name: 'gameScreen' , props: true },
 ]
 
 const router = createRouter({

@@ -43,4 +43,12 @@ io.on('connection', (socket) => {
     socket.on('my message', (msg) => {
         io.emit('my broadcast', `server: ${msg}`);
     });
+
+    socket.on("join", roomName => {
+        console.log('Joining the room', roomName );
+        socket.join(roomName);
+        peopleInRoom = Array.from(io.of("/").adapter.rooms.get(roomName));
+        console.log(peopleInRoom)
+        io.in(roomName).emit("a New Member", peopleInRoom.length);
+    }); 
 });
