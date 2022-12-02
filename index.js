@@ -27,6 +27,7 @@ server.listen(process.env.PORT || 3000);
 
 console.log("listening");
 
+// When a new user connects
 io.on('connection', (socket) => {
   
     console.log('a user connected');
@@ -36,32 +37,71 @@ io.on('connection', (socket) => {
       console.log('user disconnected');
     });
     
-    socket.on('my message', (msg) => {
-      console.log('message: ' + msg);
+    // Handles joining existing room
+    socket.on("joinExistingRoom", (roomId) => {
+      // Get all rooms
+      // going and adding rooms each of the active sockets is in 
+      // to get list of all active rooms
+      var allRooms = Array.from(io.sockets.adapter.rooms.keys())
+
+      // If room does not exist
+      if(!allRooms.includes(roomId)) {
+        io.to(socket.id).emit("joinUnsuccessful")
+      }
+      // If the room does exist
+      else {
+        const peopleBeforeNo = Array.from(io.sockets.adapter.rooms.get(roomId)).length;
+        // If people in room are already 3, we can't join in
+        if(peopleBeforeNo==3) {
+          io.to(socket.id).emit("joinUnsuccessful")
+        }
+
+        // else just join in
+        else{
+          socket.join(roomId);
+
+          const peopleAfter = Array.from(io.of("/").adapter.rooms.get(roomId));
+
+          const successDetails = {
+            roomId: roomId,
+            playerId: peopleAfter.length
+          }
+
+          // Getting the player Id for the new Player (equal to the position at which
+          // the player joined in)
+          // Getting the people in the room and informing them of the new member
+          io.to(socket.id).emit("joinSuccessful", successDetails);
+          io.to(roomId).emit("aNewMember", peopleAfter.length);
+        }
+      }
     });
 
-    socket.on('my message', (msg) => {
-        io.emit('my broadcast', `server: ${msg}`);
-        io.emit('my broadcast', `server: ${msg}`);
+    // Handles creating a new room
+    socket.on("createNewRoom", (roomId) => {
+      console.log('Creating new room ', roomId );
+      socket.join(roomId);
+
+      const successDetails = {
+        roomId: roomId,
+        playerId: 1
+      }
+      // Gives the player its player ID and passes on Number of people in room
+      io.to(socket.id).emit("joinSuccessful", successDetails);
+      io.to(socket.id).emit("aNewMember", 1);
     });
 
-    socket.on("join", roomName => {
-        console.log('Joining the room', roomName );
-        socket.join(roomName);
-        var peopleInRoom = Array.from(io.of("/").adapter.rooms.get(roomName));
-        var playerId = peopleInRoom.length
-        console.log(peopleInRoom)
-        io.to(socket.id).emit("your PlayerId", playerId);
-        io.to(roomName).emit("a New Member", peopleInRoom.length);
-    }); 
-
-    socket.on("stateChanged", newState => {
-      const roomName = newState.room
-      socket.to(roomName).emit("reflectStateChange", newState);
+    // Handling state change in one socket of the room 
+    // And passing it to others in the room
+    socket.on("stateChanged", (newState) => {
+      const roomId = newState.room
+      socket.to(roomId).emit("reflectStateChange", newState);
     });
 
-    socket.on("GameOver in room", gameOverData => {
-      const roomName = gameOverData.room
-      io.to(roomName).emit("goToGameOverScreen", gameOverData)
+    // Handling state change in one socket of the room 
+    // And passing it to others in the room
+    socket.on("gameOverInRoom", (gameOverData) => {
+      console.log("yes game over")
+      const roomId = gameOverData.room
+      io.to(roomId).emit("goToGameOverScreen", gameOverData)
     })
 });

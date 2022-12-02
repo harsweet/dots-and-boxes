@@ -10,7 +10,8 @@
                 this game is always fun! Click the 
                 button below to start a new game
             </p>
-            <div v-if="totalInRoom<=0">
+            <template v-if="totalInRoom<=0">
+              <div>
                 <input v-model="joinRoomId" placeholder="RoomID" />
 
                 <button class="page-link-btn" type="button" 
@@ -22,9 +23,15 @@
                     CREATE A NEW ROOM
                 </button>
             </div>
+
+            <span v-if="joinUnsuccessful">
+              Couldn't join in (Maybe the passcode is wrong or room is full). Try Again!
+            </span>
+            </template>
+            
             <div v-else>
                 <span v-if="totalInRoom==3">All Three Players have joined. Starting the game shortly!!</span>
-                <span v-else>Your room ID is {{this.roomId}}.Waiting For Others</span>
+                <span v-else>Your room passcode is {{this.roomId}}. Waiting For Others (Total People in room: {{(totalInRoom)}}/3)</span>
             </div>
             
         </div>
@@ -32,14 +39,13 @@
 </template>
 
 <script>
-import { io } from 'socket.io-client';
-
 export default {
   data() {
       return {
         socket: {},
         roomId: null,
         waitingForOthers: false,
+        joinUnsuccessful: false,
         totalInRoom: 0,
         joinRoomId: null,
         playerId: null
@@ -65,14 +71,21 @@ export default {
 
 
   mounted() {
-    this.$mysocket.on('a New Member', (memberCount) => {
-        this.totalInRoom = parseInt(memberCount) 
+    // Recieved when there is a new member in the room (could be the person itself)
+    this.$mysocket.on('aNewMember', (memberCount) => {
+      this.totalInRoom = parseInt(memberCount) 
     })
 
-    this.$mysocket.on("your PlayerId",(pID) => {
-        this.playerId = parseInt(pID) 
+    // Received only when you successfully join in a room
+    this.$mysocket.on("joinSuccessful",(successDetails) => {
+      this.playerId = successDetails.playerId
+      this.roomId = successDetails.roomId
     })
  
+    // In case the Join turns out to be unsuccessful
+    this.$mysocket.on("joinUnsuccessful",(successDetails) => {
+      this.joinUnsuccessful = true
+    })
   },
 
 
@@ -82,13 +95,9 @@ export default {
         return this.totalInRoom == 3
     },
 
-
     showButtons(){
         return this.totalInRoom<=0
     },
-
-   
-    
   },
   methods: {
     getRandomRoomNumber(min, max){
@@ -97,12 +106,12 @@ export default {
 
     handleNewRoom(){
       this.roomId = "room" + String(this.getRandomRoomNumber(1, 10000))
-      this.$mysocket.emit("join", this.roomId)
+      this.$mysocket.emit("createNewRoom", this.roomId)
     },
 
     handleExistingRoom(){
-      this.$mysocket.emit("join", this.joinRoomId)
-      this.roomId = this.joinRoomId
+      this.joinUnsuccessful = false
+      this.$mysocket.emit("joinExistingRoom", this.joinRoomId)
     },
   }   
 }

@@ -115,7 +115,6 @@ export default {
 
     mounted() {
     this.$mysocket.on("reflectStateChange", (newState) =>{
-      console.log(newState)
       this.boxCountArray = newState.boxCountArray
       this.boxesWon = newState.boxesWon
       this.currentPlayer = newState.currentPlayer
@@ -198,7 +197,7 @@ export default {
             winner: winners
           }
 
-          this.$mysocket.emit("GameOver in room", gameOverData);
+          this.$mysocket.emit("gameOverInRoom", gameOverData);
         }
       },
 
@@ -261,7 +260,6 @@ export default {
         }
 
         this.lineComponents = allLines
-        console.log(this.lineComponents)
       },
 
         // Setting coordinates for circles
@@ -320,8 +318,6 @@ export default {
         },
 
         computeGameState(){
-          console.log("The lines while computing are")
-          console.log(this.lineComponents)
           return {
             room: this.room,
             playerScores: this.playerScores, 
