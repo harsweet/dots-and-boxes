@@ -1,5 +1,7 @@
 import { createApp, h } from 'vue'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { io } from 'socket.io-client'
+
 import './assets/stylesheets/main.css';
 
 import App from './App.vue'
@@ -7,7 +9,7 @@ import Home from './Home.vue'
 import GameOver from './GameOver.vue'
 import GameScreen from './GameScreen.vue'
 
-
+const socket = io("http://localhost:3000")
 const app = createApp(App)
 
 // Our routes
@@ -26,4 +28,5 @@ const router = createRouter({
 })
   
 app.use(router)
+app.config.globalProperties.$mysocket = socket
 app.mount('#app')

@@ -42,6 +42,7 @@ export default {
         waitingForOthers: false,
         totalInRoom: 0,
         joinRoomId: null,
+        playerId: null
       }
   },
 
@@ -50,33 +51,30 @@ export default {
     goodToStart(newState){
         if(newState==true){
             setTimeout(() => {
-                this.$router.push('/gameScreen')
+                this.$router.push({
+                    name: 'gameScreen',
+                    params: {
+                        playerId: this.playerId,
+                        roomId: this.roomId
+                    }
+                })
             }, "3000")
         }
     }
   },
 
-  created(){
-    this.socket = io("http://localhost:3000")
-    this.socket.emit('my message', 'Hello there from Vue.')
-  } ,
 
   mounted() {
-    this.socket.on('a New Member', (memberCount) => {
-        console.log("yeah it worked")
-        console.log(memberCount)
+    this.$mysocket.on('a New Member', (memberCount) => {
         this.totalInRoom = parseInt(memberCount) 
-        console.log(this.totalInRoom)
     })
 
+    this.$mysocket.on("your PlayerId",(pID) => {
+        this.playerId = parseInt(pID) 
+    })
  
   },
 
-//   beforeUnmount() {
-//     if (this.socket) {
-//       this.socket.disconnect();
-//     } 
-//   }
 
   computed: {
 
@@ -99,11 +97,11 @@ export default {
 
     handleNewRoom(){
       this.roomId = "room" + String(this.getRandomRoomNumber(1, 10000))
-      this.socket.emit("join", this.roomId)
+      this.$mysocket.emit("join", this.roomId)
     },
 
     handleExistingRoom(){
-      this.socket.emit("join", this.joinRoomId)
+      this.$mysocket.emit("join", this.joinRoomId)
       this.roomId = this.joinRoomId
     },
   }   

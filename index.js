@@ -42,13 +42,26 @@ io.on('connection', (socket) => {
 
     socket.on('my message', (msg) => {
         io.emit('my broadcast', `server: ${msg}`);
+        io.emit('my broadcast', `server: ${msg}`);
     });
 
     socket.on("join", roomName => {
         console.log('Joining the room', roomName );
         socket.join(roomName);
-        peopleInRoom = Array.from(io.of("/").adapter.rooms.get(roomName));
+        var peopleInRoom = Array.from(io.of("/").adapter.rooms.get(roomName));
+        var playerId = peopleInRoom.length
         console.log(peopleInRoom)
-        io.in(roomName).emit("a New Member", peopleInRoom.length);
+        io.to(socket.id).emit("your PlayerId", playerId);
+        io.to(roomName).emit("a New Member", peopleInRoom.length);
     }); 
+
+    socket.on("stateChanged", newState => {
+      const roomName = newState.room
+      socket.to(roomName).emit("reflectStateChange", newState);
+    });
+
+    socket.on("GameOver in room", gameOverData => {
+      const roomName = gameOverData.room
+      io.to(roomName).emit("goToGameOverScreen", gameOverData)
+    })
 });

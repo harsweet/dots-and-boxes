@@ -19,17 +19,21 @@
 
   <!-- Informs the players of the player turns -->
   <h5 class="turn-dashboard-text board-element">Turn: Player {{ currentPlayer }}</h5>
-  
+
+  <h5 class="turn-dashboard-text board-element">You are Player: {{ $props.playerId }}</h5>
   <!-- Draws the acutal board -->
   <!-- First come the lines -->
   <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
     <template v-for="lineComponent in Object.entries(lineComponents)">
       <BoxLine 
       :id="'line-'+lineComponent[0]"
-      :boxId="lineComponent[1]" 
+      :boxId="lineComponent[1].boxes" 
       :lineCoordinates="lineComponent[0]" 
-      stroke="white"
-      cursor="pointer"
+      :playerId="$props.playerId"
+      :currentTurn="currentPlayer"
+      :clicked="lineComponent[1].alreadyClicked"
+      :stroke="lineComponent[1].stroke"
+      :cursor="lineComponent[1].cursor"
       @increaseBoxCount="increaseBoxCount"
       />
     </template>
@@ -46,8 +50,10 @@
   </svg>
 </template>
 <script>
-
+import { io } from 'socket.io-client';
 export default {
+  
+
   // A possible extension of this future where we can have dynamic player numbers and board sizes
   // Not required for this assignment as we only need a 4 * 4 grid and 3 player support
   props: {
@@ -58,11 +64,20 @@ export default {
         noOfPlayers: {
           type: Number,
           default: 3
+        },
+        playerId: {
+          type: Number,
+          required: true
+        },
+        roomId: {
+          type: String,
+          required: true
         }
     },
    
     data() {
         return {
+            socket: {},
             rowsAndColumnsNo: null,
             boxes: [], 
             dotComponents: [],
@@ -74,17 +89,64 @@ export default {
             playerScores: [],
             playerColors: ["red", "yellow", "green"],   // To help identify players
             boxesWon: [],
+            gameState: [],
+            room: null
         }
+    },
+
+    watch: {
+
+      gameState(newState){
+        this.$mysocket.emit("stateChanged", newState);
+      }
+
     },
 
     beforeMount(){
       // Befor mounting the app (showing the game), we initialise some stuff
+      this.room = this.$props.roomId
       this.rowsAndColumnsNo = this.$props.dotsNo-1
       this.setSvgData()
       this.initialiseBoxCount()
       this.initialisePlayerScore()
       this.initialiseBoxesWon()
+      // this.gameState = this.computeGameState() 
     },
+
+    mounted() {
+    this.$mysocket.on("reflectStateChange", (newState) =>{
+      console.log(newState)
+      this.boxCountArray = newState.boxCountArray
+      this.boxesWon = newState.boxesWon
+      this.currentPlayer = newState.currentPlayer
+      this.playerScores = newState.playerScores
+      this.lineComponents = newState.lineComponents
+    })
+
+    this.$mysocket.on("goToGameOverScreen", (gameOverData)=>{
+      this.$router.push({
+        name: 'gameOver',
+        params: {
+          winner: gameOverData.winner
+        }
+      }) 
+    })
+     
+  },
+
+    computed: {
+
+      gameState(){
+        return {
+          scores: this.playerScores, 
+          boxesWon: this.boxesWon,
+          boxCountArray: this.boxCountArray ,
+          lineComponents: this.lineComponents, 
+          currentPlayers: this.currentPlayer
+        }
+      }
+    },
+
 
     methods: {
 
@@ -130,12 +192,13 @@ export default {
       gameOverCheck(){
         if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
           const winners = this.getWinners()
-          this.$router.push({
-            name: 'gameOver',
-            params: {
-              winner: winners
-            }
-          }) 
+         
+          const gameOverData = {
+            room: this.room,
+            winner: winners
+          }
+
+          this.$mysocket.emit("GameOver in room", gameOverData);
         }
       },
 
@@ -170,7 +233,7 @@ export default {
       // For getting data for drawing using the boxes
       getLinesSvgData(){
         this.setBoxes()
-        var allLines = []
+        var allLines = {}
 
         for (let boxNo = 0; boxNo <this.boxes.length; boxNo++){
           
@@ -183,18 +246,23 @@ export default {
           const lines = [line1, line2, line3, line4]
 
           for (const line of lines) { 
-            if(!allLines[[line]]){
-              allLines[[line]] = new Array()
-              allLines[[line]].push(aBox.boxId)
+            if(!allLines[line]){
+              allLines[line] = {}
+              allLines[line].boxes = new Array()
+              allLines[line].boxes.push(aBox.boxId)
+              allLines[line].alreadyClicked = false
+              allLines[line].stroke = 'white'
+              allLines[line].cursor = 'pointer'
             }
-            else{
-              allLines[[line]].push(aBox.boxId)
+            else{  
+              allLines[line].boxes.push(aBox.boxId)
             }
           }
         }
 
         this.lineComponents = allLines
-        },
+        console.log(this.lineComponents)
+      },
 
         // Setting coordinates for circles
         setCircleSvgData(){
@@ -221,11 +289,10 @@ export default {
         // TO increase box count of boxes to which a line belong, invoked when it clicked
         increaseBoxCount(boxIds, lineCoordinates){
           
-          // Getting the the Line by its Id
-          const lineElement = document.getElementById('line-'+lineCoordinates)
-          lineElement.setAttribute("stroke", this.playerColors[this.currentPlayer-1])
-          lineElement.setAttribute("visibility","visible")
-          lineElement.removeAttribute("cursor")
+          const lineCoordinatesArray = lineCoordinates.split(',')
+          this.lineComponents[lineCoordinatesArray].alreadyClicked = true
+          this.lineComponents[lineCoordinatesArray].cursor = 'default'
+          this.lineComponents[lineCoordinatesArray].stroke = this.playerColors[this.currentPlayer-1]
           
           // Updating stuff
           var boxesCompletedThisTurn = false
@@ -243,11 +310,26 @@ export default {
             this.changeTurn()
           }
 
+          this.gameState = this.computeGameState()
+
           // In order to give some time for showing the line color change, before
           // going to the gameOver page, when condition is met
           // Also it repeatedly checks for whether gameOver condition is met, after
           // each line click 
           setTimeout(() => this.gameOverCheck(), 200)
+        },
+
+        computeGameState(){
+          console.log("The lines while computing are")
+          console.log(this.lineComponents)
+          return {
+            room: this.room,
+            playerScores: this.playerScores, 
+            boxesWon: this.boxesWon,
+            boxCountArray: this.boxCountArray ,
+            lineComponents: this.lineComponents, 
+            currentPlayer: this.currentPlayer
+          }
         }
     }
 }

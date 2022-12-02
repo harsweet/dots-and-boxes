@@ -23,6 +23,18 @@ export default {
         lineCoordinates: {
             type: String,
             required: true
+        },
+        clicked: {
+            type: Boolean,
+            required: true
+        },
+        currentTurn: {
+            type: Number,
+            required: true
+        },
+        playerId: {
+            type: Number,
+            required: true
         }
     },
 
@@ -34,7 +46,7 @@ export default {
             lineEndX: null,
             lineEndY: null,
             alreadyClicked: false,
-            lineVisibility: "hidden"
+            lineVisibility: "hidden",
         }
     },
 
@@ -45,6 +57,7 @@ export default {
         this.lineStartY = coordinates[1]
         this.lineEndX = coordinates[2]
         this.lineEndY = coordinates[3]
+        this.alreadyClicked = this.$props.clicked
     },
 
     computed: {
@@ -61,8 +74,7 @@ export default {
         // For when the line is clicked
         // Only works it had not been 'alreadyClicked'
         handleClick(){
-            if(!this.alreadyClicked){
-                this.alreadyClicked = true
+            if(!this.alreadyClicked && this.$props.playerId == this.$props.currentTurn){
                 this.$emit('increaseBoxCount', this.boxId, this.$props.lineCoordinates)
             }
         },
