@@ -4,10 +4,6 @@
 <template>
   <!-- The Two Action Buttons -->
   <button class="page-link-btn" type="button"
-  @click="$router.go()">
-    RESTART THE GAME
-  </button>
-  <button class="page-link-btn" type="button"
   @click="$router.push('/')">
     GO BACK TO HOME
   </button>
@@ -193,7 +189,7 @@ export default {
           const winners = this.getWinners()
          
           const gameOverData = {
-            room: this.room,
+            roomId: this.room,
             winner: winners
           }
 

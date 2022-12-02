@@ -100,8 +100,7 @@ io.on('connection', (socket) => {
     // Handling state change in one socket of the room 
     // And passing it to others in the room
     socket.on("gameOverInRoom", (gameOverData) => {
-      console.log("yes game over")
-      const roomId = gameOverData.room
+      const roomId = gameOverData.roomId
       io.to(roomId).emit("goToGameOverScreen", gameOverData)
     })
 });

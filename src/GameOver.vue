@@ -7,14 +7,6 @@
             <p class="page-header">
                 {{ messageToDisplay }}
             </p>
-            <p class="page-description">
-                If players want, you can start a new game
-                or go back to the Home Page
-            </p>
-            <button class="page-link-btn" type="button"
-            @click="$router.push('/gameScreen')">
-                START ANOTHER GAME
-            </button>
             <button class="page-link-btn" type="button"
             @click="$router.push('/')">
                 GO BACK TO HOME
