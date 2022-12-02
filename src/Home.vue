@@ -7,8 +7,7 @@
             </p>
             <p class="page-description">
                 Whether you are an expert or a newbie, 
-                this game is always fun! Click the 
-                button below to start a new game
+                this game is always fun!
             </p>
             <template v-if="totalInRoom<=0">
               <div>
@@ -24,14 +23,18 @@
                 </button>
             </div>
 
-            <span v-if="joinUnsuccessful">
+            <span v-if="joinUnsuccessful" class="page-description" style="color: red;">
               Couldn't join in (Maybe the passcode is wrong or room is full). Try Again!
             </span>
             </template>
             
             <div v-else>
-                <span v-if="totalInRoom==3">All Three Players have joined. Starting the game shortly!!</span>
-                <span v-else>Your room passcode is {{this.roomId}}. Waiting For Others (Total People in room: {{(totalInRoom)}}/3)</span>
+                <span v-if="totalInRoom==3" class="page-description" style="color:aqua">
+                  All Three Players have joined. Starting the game shortly!!
+                </span>
+                <span v-else class="page-description" style="color:chartreuse;">
+                  Your in the room with passcode {{this.roomId}}. Waiting For Others (Total People in the room: {{(totalInRoom)}}/3)
+                </span>
             </div>
             
         </div>
@@ -39,6 +42,8 @@
 </template>
 
 <script>
+import { nanoid } from 'nanoid'
+
 export default {
   data() {
       return {
@@ -100,12 +105,8 @@ export default {
     },
   },
   methods: {
-    getRandomRoomNumber(min, max){
-      return Math.floor(Math.random() * (max - min) + min)
-    },
-
     handleNewRoom(){
-      this.roomId = "room" + String(this.getRandomRoomNumber(1, 10000))
+      this.roomId = nanoid(8)
       this.$mysocket.emit("createNewRoom", this.roomId)
     },
 
