@@ -74,6 +74,8 @@ export default {
             roomId: this.roomId,
             nameDetails: nameObject
           }
+
+          // For telling others your name
           this.$mysocket.emit("hearMyName", details)
             setTimeout(() => {
                 this.$router.push({
@@ -107,6 +109,7 @@ export default {
       this.joinUnsuccessful = true
     })
 
+    // When you hear others' names
     this.$mysocket.on("hearNames", (otherDetails) => {
       const newName = {}
       newName[otherDetails.id] = otherDetails.name
@@ -117,6 +120,7 @@ export default {
 
   computed: {
 
+    // For game start
     goodToStart(){
         return this.totalInRoom == 3
     },
@@ -126,6 +130,7 @@ export default {
     },
   },
   methods: {
+    // Handling room buttons
     handleNewRoom(){
       this.roomId = nanoid(8)
       this.$mysocket.emit("createNewRoom", this.roomId)

@@ -110,7 +110,7 @@ export default {
     },
 
   mounted() {
-    this.playerNames = JSON.parse(this.$props.pNames)
+    // For reflecting state change
     this.$mysocket.on("reflectStateChange", (newState) =>{
       this.boxCountArray = newState.boxCountArray
       this.boxesWon = newState.boxesWon
@@ -123,6 +123,9 @@ export default {
     })
 
     this.$mysocket.on("goToGameOverScreen", (gameOverData)=>{
+      // Emptying stuff when game over
+      localStorage.setItem('latestState', null)
+      // Going to the screen
       this.$router.push({
         name: 'gameOver',
         params: {
@@ -134,12 +137,12 @@ export default {
     // Seeing the local storage stuff
     // If props are being passed (means person coming straight from home)
     if(this.$props.roomId){
+      this.playerNames = JSON.parse(this.$props.pNames)
       this.room = this.$props.roomId
       this.player = this.$props.playerId
 
       localStorage.setItem('room', this.room, '1d')
       localStorage.setItem("player", this.playerId, '1d')
-      localStorage.setItem('latestState', null)
     }
     // if retrieving from local Storage
     // Parsing the last stored state
@@ -149,8 +152,10 @@ export default {
       this.player = localStorage.getItem('player')
 
       if(localStorage.getItem('latestState')){
+        console.log(localStorage.getItem('latestState'))
         const latestState = JSON.parse(localStorage.getItem('latestState'))
 
+        // Getting the state and using it
         this.boxCountArray = latestState.boxCountArray
         this.boxesWon = latestState.boxesWon
         this.currentPlayer = latestState.currentPlayer
@@ -165,6 +170,7 @@ export default {
 
     computed: {
 
+      // Gets game state computed
       gameState(){
         return {
           scores: this.playerScores, 
@@ -348,6 +354,7 @@ export default {
           setTimeout(() => this.gameOverCheck(), 200)
         },
 
+        // Computes the game state
         computeGameState(){
           return {
             room: this.room,
