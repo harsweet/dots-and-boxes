@@ -10,13 +10,12 @@
 
   <!-- Uses the playerScores array to show the scores -->
   <template v-for="(score, index) in playerScores">
-    <h5 class="score-dashboard-text board-element" :style="{'color': playerColors[index]}">Player {{index+1}} Score: {{score}}</h5>
+    <h5 class="score-dashboard-text board-element" :style="{'color': playerColors[index]}">Player {{(index+1)}} ({{playerNames[index+1]}})    Score: {{score}}</h5>
   </template>
 
   <!-- Informs the players of the player turns -->
   <h5 class="turn-dashboard-text board-element">Turn: Player {{ currentPlayer }}</h5>
 
-  <h5 class="turn-dashboard-text board-element">You are Player: {{ player }}</h5>
   <!-- Draws the acutal board -->
   <!-- First come the lines -->
   <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
@@ -65,6 +64,9 @@ export default {
         },
         roomId: {
           type: String,
+        },
+        pNames: {
+          type: String
         }
     },
    
@@ -85,6 +87,7 @@ export default {
             gameState: [],
             room: null,
             player: null,
+            playerNames : {}
         }
     },
 
@@ -107,6 +110,7 @@ export default {
     },
 
   mounted() {
+    this.playerNames = JSON.parse(this.$props.pNames)
     this.$mysocket.on("reflectStateChange", (newState) =>{
       this.boxCountArray = newState.boxCountArray
       this.boxesWon = newState.boxesWon
@@ -152,6 +156,7 @@ export default {
         this.currentPlayer = latestState.currentPlayer
         this.playerScores = latestState.playerScores
         this.lineComponents = latestState.lineComponents
+        this.playerNames = latestState.playerNames
       }
 
       this.$mysocket.emit("playerRejoin", this.room)
@@ -216,7 +221,8 @@ export default {
       gameOverCheck(){
         if (this.boxesCompleted == (this.$props.dotsNo -1)*(this.$props.dotsNo -1)){
           const winners = this.getWinners()
-         
+          
+          console.log("it is a game over")
           const gameOverData = {
             roomId: this.room,
             winner: winners
@@ -349,7 +355,8 @@ export default {
             boxesWon: this.boxesWon,
             boxCountArray: this.boxCountArray ,
             lineComponents: this.lineComponents, 
-            currentPlayer: this.currentPlayer
+            currentPlayer: this.currentPlayer,
+            playerNames: this.playerNames
           }
         }
     }

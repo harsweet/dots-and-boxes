@@ -108,4 +108,9 @@ io.on('connection', (socket) => {
     socket.on("playerRejoin", (roomId) => {
       socket.join(roomId);
     })
+
+    // Handling people speaking their names
+    socket.on("hearMyName", (details) => {
+      io.to(details.roomId).emit("hearNames", details.nameDetails);
+    })
 });

@@ -119,6 +119,24 @@ body * {
   font-style: oblique;
 }
 
+input[type=text], select {
+  width: 50%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+#info-getter{
+  display: contents;
+}
+
+#button-holder {
+  margin: 20px 0;
+}
+
 @media only screen and (max-width: 600px) {
   #board-svg {
     width: 100%;

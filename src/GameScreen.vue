@@ -6,7 +6,7 @@
     <div class="game-setting page-background">
         <div class="flex-column">
             <div class="board-holder">
-            <Board :playerId="$props.playerId" :roomId="$props.roomId"/>
+            <Board :playerId="$props.playerId" :roomId="$props.roomId" :pNames="$props.playerNames"/>
             </div>
         </div>   
     </div>
@@ -17,12 +17,13 @@
 export default {
     props: {
         playerId: {
-            type: Number,
-            required: true
+            type: Number
         },
         roomId: {
-            type: String,
-            required: true
+            type: String
+        },
+        playerNames: {
+            type: String
         }
     },
 }
