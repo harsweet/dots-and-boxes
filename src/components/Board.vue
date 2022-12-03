@@ -16,7 +16,7 @@
   <!-- Informs the players of the player turns -->
   <h5 class="turn-dashboard-text board-element">Turn: Player {{ currentPlayer }}</h5>
 
-  <h5 class="turn-dashboard-text board-element">You are Player: {{ $props.playerId }}</h5>
+  <h5 class="turn-dashboard-text board-element">You are Player: {{ player }}</h5>
   <!-- Draws the acutal board -->
   <!-- First come the lines -->
   <svg id="board-svg" viewBox="0 0 170 170" xmlns="http://www.w3.org/2000/svg">
@@ -25,7 +25,7 @@
       :id="'line-'+lineComponent[0]"
       :boxId="lineComponent[1].boxes" 
       :lineCoordinates="lineComponent[0]" 
-      :playerId="$props.playerId"
+      :playerId="player"
       :currentTurn="currentPlayer"
       :clicked="lineComponent[1].alreadyClicked"
       :stroke="lineComponent[1].stroke"
@@ -46,9 +46,8 @@
   </svg>
 </template>
 <script>
-import { io } from 'socket.io-client';
+
 export default {
-  
 
   // A possible extension of this future where we can have dynamic player numbers and board sizes
   // Not required for this assignment as we only need a 4 * 4 grid and 3 player support
@@ -63,11 +62,9 @@ export default {
         },
         playerId: {
           type: Number,
-          required: true
         },
         roomId: {
           type: String,
-          required: true
         }
     },
    
@@ -86,7 +83,8 @@ export default {
             playerColors: ["red", "yellow", "green"],   // To help identify players
             boxesWon: [],
             gameState: [],
-            room: null
+            room: null,
+            player: null,
         }
     },
 
@@ -94,28 +92,30 @@ export default {
 
       gameState(newState){
         this.$mysocket.emit("stateChanged", newState);
+        localStorage.setItem('latestState', JSON.stringify(newState) , '1d')
       }
 
     },
 
     beforeMount(){
       // Befor mounting the app (showing the game), we initialise some stuff
-      this.room = this.$props.roomId
       this.rowsAndColumnsNo = this.$props.dotsNo-1
       this.setSvgData()
       this.initialiseBoxCount()
       this.initialisePlayerScore()
       this.initialiseBoxesWon()
-      // this.gameState = this.computeGameState() 
     },
 
-    mounted() {
+  mounted() {
     this.$mysocket.on("reflectStateChange", (newState) =>{
       this.boxCountArray = newState.boxCountArray
       this.boxesWon = newState.boxesWon
       this.currentPlayer = newState.currentPlayer
       this.playerScores = newState.playerScores
       this.lineComponents = newState.lineComponents
+
+      //Storing the state changes in the local Storage
+      localStorage.setItem('latestState', JSON.stringify(newState) , '1d')
     })
 
     this.$mysocket.on("goToGameOverScreen", (gameOverData)=>{
@@ -127,6 +127,35 @@ export default {
       }) 
     })
      
+    // Seeing the local storage stuff
+    // If props are being passed (means person coming straight from home)
+    if(this.$props.roomId){
+      this.room = this.$props.roomId
+      this.player = this.$props.playerId
+
+      localStorage.setItem('room', this.room, '1d')
+      localStorage.setItem("player", this.playerId, '1d')
+      localStorage.setItem('latestState', null)
+    }
+    // if retrieving from local Storage
+    // Parsing the last stored state
+    // And retrieving it onto the board
+    else {
+      this.room = localStorage.getItem('room')
+      this.player = localStorage.getItem('player')
+
+      if(localStorage.getItem('latestState')){
+        const latestState = JSON.parse(localStorage.getItem('latestState'))
+
+        this.boxCountArray = latestState.boxCountArray
+        this.boxesWon = latestState.boxesWon
+        this.currentPlayer = latestState.currentPlayer
+        this.playerScores = latestState.playerScores
+        this.lineComponents = latestState.lineComponents
+      }
+
+      this.$mysocket.emit("playerRejoin", this.room)
+    }
   },
 
     computed: {

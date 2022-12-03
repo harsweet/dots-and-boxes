@@ -29,7 +29,7 @@ console.log("listening");
 
 // When a new user connects
 io.on('connection', (socket) => {
-  
+
     console.log('a user connected');
 
 
@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
     // And passing it to others in the room
     socket.on("stateChanged", (newState) => {
       const roomId = newState.room
-      socket.to(roomId).emit("reflectStateChange", newState);
+      io.to(roomId).emit("reflectStateChange", newState);
     });
 
     // Handling state change in one socket of the room 
@@ -102,5 +102,10 @@ io.on('connection', (socket) => {
     socket.on("gameOverInRoom", (gameOverData) => {
       const roomId = gameOverData.roomId
       io.to(roomId).emit("goToGameOverScreen", gameOverData)
+    })
+
+    // Handling the player Rejoin
+    socket.on("playerRejoin", (roomId) => {
+      socket.join(roomId);
     })
 });
