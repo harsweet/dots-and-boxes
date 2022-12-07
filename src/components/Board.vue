@@ -128,6 +128,7 @@ export default {
       // Going to the screen
       this.$router.push({
         name: 'gameOver',
+        path: '/gameOver',
         params: {
           winner: gameOverData.winner
         }
