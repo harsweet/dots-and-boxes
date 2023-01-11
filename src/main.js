@@ -9,7 +9,7 @@ import Home from './Home.vue'
 import GameOver from './GameOver.vue'
 import GameScreen from './GameScreen.vue'
 
-const socket = io("http://localhost:3000")
+const socket = io("/")
 const app = createApp(App)
 
 // Our routes
