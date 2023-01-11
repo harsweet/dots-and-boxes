@@ -1,4 +1,7 @@
 {
+  "engines": {
+    "node": ">=18"
+  },
   "name": "dots-and-boxes",
   "version": "0.0.0",
   "scripts": {
